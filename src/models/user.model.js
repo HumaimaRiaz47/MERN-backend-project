@@ -51,9 +51,10 @@ const userSchema = new Schema(
   }
 );
 
-userSchema.pre("save", function () {
+userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next(); //this means that the mention field password be modified in order to apply pre hook
-  this.password = bcrypt.hash(this.password, 10);
+
+  this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
