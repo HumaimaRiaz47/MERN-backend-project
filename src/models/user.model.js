@@ -29,7 +29,7 @@ const userSchema = new Schema(
     },
     coverImage: {
       type: String, //cloudinary url
-      required: true,
+      required: false,
     },
     watchHistory: [
       //user array here because in history multiple video show with the help of video id.

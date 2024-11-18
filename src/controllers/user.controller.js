@@ -5,8 +5,22 @@ import { uploadOnCloudinary } from '../utils/cloudinary.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 
 const registerUser = asyncHandler(async (req, res) => {
+    //get user details from frontend
+    //validate - not empty
+    //check if the user alresdy exists or not : username, email
+    //check for images and avatar
+    //create user object - create entry in db
+    //remove password and refresh token field from response
+    //check for user creation
+    //return response
+
+
     const { fullName, email, username, password } = req.body;
     console.log("email:", email);
+
+    // if(fullName === ""){
+    //     throw new ApiError(400, "full name required")
+    //}
 
     // Check if any required field is empty
     if ([fullName, email, username, password].some(field => field?.trim() === "")) {
@@ -22,11 +36,16 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError(409, "user already exists")
     }
 
-    //save image and coverimage at local path and aply validation for avatar image
+    //save image and coverimage at local path and apply validation for avatar image
 
     const avatarLocalpath = req.files?.avatar[0]?.path;
-    const coverImageLocalpath = req.files?.coverImage[0]?.path;
+    // const coverImageLocalpath = req.files?.coverImage[0]?.path;
 
+    let coverImageLocalpath;
+    if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+        coverImageLocalpath = req.files.coverImage[0].path
+    }
+    
     if(!avatarLocalpath){
         throw new ApiError(400, "avatar file is required")
     }
@@ -35,7 +54,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     //upload on cloudinary
     const avatar = await uploadOnCloudinary(avatarLocalpath)
-    const coverImage = await uploadOnCloudinary(coverImageLocalpath)
+    const coverImage = coverImageLocalpath? await uploadOnCloudinary(coverImageLocalpath) : null;
 
     if(!avatar){
         throw new ApiError(400, "avatar is required")
