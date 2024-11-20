@@ -3,6 +3,8 @@ import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import jwt from "jsonwebtoken"
+import mongoose from "mongoose";
 
 const generateAccessAndRefreshToken = async (userId) => {
   try {
@@ -19,7 +21,7 @@ const generateAccessAndRefreshToken = async (userId) => {
 
     // Store the newly generated refresh token in the user object.
     // This allows the server to validate the token later.
-    this.refreshToken = refreshToken;
+    user.refreshToken = refreshToken;
 
     // Save the user object back to the database.
     // `validateBeforeSave: false` skips model validation to avoid additional processing.
