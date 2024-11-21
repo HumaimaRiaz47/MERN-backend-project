@@ -352,37 +352,40 @@ const updateUserAvatar = asyncHandler(async(req, res) => {
   
 })
 
-const updateUserCoverImage = asyncHandler(async(req, res) => {
+const updateUserCoverImage = asyncHandler(async (req, res) => {
+  // Extract the local file path of the uploaded cover image from the request
+  const coverImageLocalpath = req.file?.path;
 
-  const coverImageLocalpath = req.file?.path
-
+  // If no file was uploaded, throw an error
   if (!coverImageLocalpath) {
-      throw new ApiError(400, "cover image file is missing")
-  } 
-
-  const coverImage = await uploadOnCloudinary(coverImageLocalpath)
-
-  if(!coverImage.url){
-    throw new ApiError(400, "error while uploading on cover image")
+    throw new ApiError(400, "cover image file is missing");
   }
 
+  // Upload the image to a cloud storage service (e.g., Cloudinary)
+  const coverImage = await uploadOnCloudinary(coverImageLocalpath);
+
+  // If the upload fails and no URL is returned, throw an error
+  if (!coverImage.url) {
+    throw new ApiError(400, "error while uploading cover image");
+  }
+
+  // Find the logged-in user by their ID and update their cover image URL in the database
   const user = await User.findByIdAndUpdate(
-    req.user?._id,
+    req.user?._id, // User ID from the request (assumed to be set by authentication middleware)
     {
       $set: {
-        coverImage: coverImage.url
-      }
+        coverImage: coverImage.url, // Set the new cover image URL
+      },
     },
-    {new: true}
+    { new: true } // Return the updated user object
+  ).select("-password"); // Exclude the password field from the returned user object
 
-  ).select("-password")
-
+  // Send a success response with the updated user data
   return res
-  .status(200)
-  .json(200, user, "cover image updated successfully")
+    .status(200) // Set HTTP status to 200 (success)
+    .json(200, user, "cover image updated successfully");
+});
 
-  
-})
 
 export {
   registerUser,
