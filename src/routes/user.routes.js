@@ -5,7 +5,7 @@ import {
     loginUser,
     logoutUser,
     refreshAccessToken,
-    changeCurrentPassword
+    changeCurrentPassword,
     getCurrentUser,
     updateAccountDetails,
     updateUserAvatar,
@@ -42,7 +42,7 @@ router.route('/current-user').get(verifyJwt, getCurrentUser)
 router.route('/updated-account').patch(verifyJwt, updateAccountDetails)
 
 router.route('/avatar').patch(verifyJwt, upload.single('avatar'), updateUserAvatar)
-router.route('/cover-image').patch(verifyJwt, upload.single('/coverImage'), updateUserCoverImage)
+router.route('/cover-image').patch(verifyJwt, upload.single('coverImage'), updateUserCoverImage)
 
 router.route('/c/:username').get(verifyJwt, getUserChannelProfile)
 router.route('/history').get(verifyJwt, getWatchHistory)
